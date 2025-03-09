@@ -58,8 +58,6 @@ ENUMERACION
             netdiscover -r {Rango de IP}
                   -r Este argumento indica que se va escanear un rango de ip.
 
-            
-
      DESCUBRIMIENTO DE PUERTOS
      .........................
 
@@ -280,11 +278,13 @@ EXPLOTACION
                         sqlmap -r consulta.rez -p id -D-D <base de datos> -T <Tabla> -C <Columna,Columna2...> --dump
                   5 - Podemos crackear los hashes con john siguiendo los pasos de sqlmap
 
-            XSS/CROSS SITE SCRIPTING
+            XSS/CROSS SITE SCRIPTING => Vulnerabilidad que acepta la entrada de codigo javascript
             ........................
 
+                  REFLECTED => se muestra 1 vez el script sin almacenarse
+                  STORED => se queda almacenado y todo el que visite puede ejecutarlo ej: entrada blog
                   
-
+                      Probamos un script ej: <script>alert("HAS SIDO HACKEADO")</script>
 
       BUSCAR EXPLOIT
       ..............

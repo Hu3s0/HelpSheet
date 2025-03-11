@@ -18,7 +18,7 @@ LINUX
    export SHELL=bash
    stty rows 52 columns 180
 
-   ------ option 3 -------
+   ------ option 2 -------
    python3 -c 'import pty; pty.spawn("/bin/bash")'
    export TERM=screen-256color
    [Ctrl + z]

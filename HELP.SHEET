@@ -8,25 +8,12 @@ TRATAMIENTO TTY
 ...............
 
 LINUX
-
+.....
    ------ option 1 -------
    script /dev/null -c bash
    ctrl+z
-   stty raw-echo
-   fg
-   reset
-   xterm
-   export TERM=xterm
-   export SHELL=bash
-   stty rows 52 columns 180
-
-   ------ option 2 -------
-   script /dev/null -c bash
-   ctrl+z
-   stty raw-echo
-   fg
-   reset
-   xterm
+   stty raw -echo; fg
+   reset xterm
    export TERM=xterm
    export SHELL=bash
    stty rows 52 columns 180
@@ -353,6 +340,67 @@ EXPLOTACION
       ncrack -vv --user user -P wordlist.txt [IP]:3389 -- Try cracking rdp login
 
       crowbar -b rdp -u user -C password_wordlist -s [IP] -v -- Other method to try cracking
+
+ANONIMATO/TOR
+.............
+
+      INSTALACION TOR
+      ...............
+
+         sudo apt install tor
+         sudo apt install tor torbrowser-launcher -y
+
+      INICIAR SERVICIO TOR => iniciar cada vez que se reinicia
+      ....................
+
+         sudo service tor start
+         sudo service tor status
+
+      CONFIGURAR PROXYCHAINS => para dirigir nuestro trafico por Tor
+      ......................
+
+         sudo nano /etc/proxychains4.conf
+               - Borramos # de #dynamic_chain
+               - Ponemos # a strict_chain
+               - Al final del archivo añadimos: socks5 127.0.0.1 9050
+               - Reiniciamos equipo
+
+         Si vamos a usar Metasploit añadimos la linea:
+               localnet 127.0.0.1 000 255.255.255.255
+
+      USAR PROXYCHAINS
+      ................
+
+         Se añade delante del comando de uso normal, el comando proxychains.
+               Ej: proxychains nmap -vv dominio.com => Hacer scaneo nmap anonimo
+               Ej: proxychains dirb <IP> <WORDLIST> => Hacer fuzzing anonimo
+               Ej: proxychains firefox => navegar usando la red Tor
+               Ej: proxychains nikto -h <IP>
+               Ej: proxychains msfconsole
+
+
+      FIREFOX ANONIMATO
+      .................
+
+         - Desactivar opcion "media.peerconnection.enabled" en about:config
+
+      GOOGLE CHROME ANONIMATO
+      .......................
+
+         - Instalar extencion oficial google WebRTC Network Limiter. 
+
+      EXTRA ANONIMATO
+      ...............
+
+         Modificar DNS de Google o OpenDNS
+            sudo nano /etc/resolv.conf
+               - http://servers.opennicproject.org/ => Usar 2 direcciones distinto Owner
+               - https://blog.uncensoreddns.org/ => 91.239.100.100 y 89.233.43.71
+
+         Usar VPN => NordVPN de las mejores
+         
+
+         
 
 
 

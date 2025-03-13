@@ -298,7 +298,11 @@ EXPLOTACION
             FILE UPLOAD
             ...........
 
-                  Esta vulnerabilidad consiste en subir una reverse shell camuflada en un archivo esperado ej: .jpg .png etc
+                  Esta vulnerabilidad consiste en subir un archivo que ejecute comandos o incluso una reverse shell camuflada en un archivo esperado ej: .jpg .png etc
+
+                  1 - Crea el archivo con el codigo modificado y en formato .php
+                  2 - Pon la maquina atacante en escucha =>            3 - Sube el archivo PHP a la victima y visitalo
+                  4 - Recibe el acceso remoto en tu terminal Netcat
 
                   - Forma facil te deja directamente subir un archivo cualquiera. Ej: reverse.php => contiene una reverse shell
                   - Forma normal => se debe camuflar el archivo en lo esperado. Se hace asi:   
@@ -310,6 +314,14 @@ EXPLOTACION
                               Cambiamos extension si es reverse.jpg => esta camuflado la reverse
                         4 - Hacer fuzzing para buscar la carpeta upload y ejecutar la reverse shell
 
+                 
+                  CREACION ARCHIVO .PHP
+                  .....................
+                        sudo nano prueba.php => dentro incluimos el codigo de la reverse shell o comandos que necesitemos usar
+                           Ej:   <?php
+                                 system('comando');
+                                 ?>
+                             
             SQL INJENCTION
             ..............
                   

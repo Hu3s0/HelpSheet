@@ -408,7 +408,7 @@ EXPLOTACION
             https://hashes.com/en/decrypt/hash
             https://hashcat.net/wiki/doku.php?id=example_hashes
 
-            ssh2john id_rsa > hashes.txt => Pasar un id_rsa a hash para crackear el hash
+            2john id_rsa > hashes.txt => Pasar un id_rsa a hash para crackear el hash
 
             john --wordlist=/usr/share/wordlist/rockyou.txt hash.txt
             sudo john --format=[format] --wordlist=[path to wordlist] [path to file]
@@ -455,6 +455,7 @@ EXPLOTACION
                      -t: Determina el número de intentos de inicio de sesión paralelos que se ejecutan simultáneamente. Aumentar este número puede acelerar el ataque, pero también puede aumentar la probabilidad de detección o la activación de medidas de seguridad en el sistema objetivo.
 
          ssh sshuser@<IP> -p PORT => Este comando iniciará una sesión SSH interactiva
+         ssh root@10.10.10.10 -i id_rsa => Acceder con id_rsa
          
       FTP   
       ...   

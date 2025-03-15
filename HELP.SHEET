@@ -71,7 +71,7 @@ ENUMERACION
                dig axfr [dominio]
                nslookup
 
-           whatweb -v http://url.com
+            whatweb -v http://url.com
 
             sslscan <ip> => permitirá anilizar el protocolo SSL/TLS que tiene configurado
 
@@ -100,6 +100,8 @@ ENUMERACION
                   -t: Este argumento indica los hilos a los que se va a hacer el descubrimiento. Mientras más hilos, más ruido creas en la red y menos preciso es el escaneo
             gobuster -u "ip" -w /usr/share/wordlist/rockyou.txt -t 30 -x .txt,.php.js
                   -x: Este argumento indica las extensiones que se quieren analizar.
+            gobuster dns -d inlanefreight.com -w /usr/share/SecLists/Discovery/DNS/namelist.txt => Enumera Subdominios DNS
+
 
             wpscan --url http://web.com/carpeta => escaneo de web "wordpress" con plugins incluidos y versiones  
 
@@ -351,6 +353,7 @@ EXPLOTACION
       ..............
 
             searchsploit wordpress mail masta 
+            searchsploit -x <path>
 
       ENCODEAR PAYLOAD
       ................

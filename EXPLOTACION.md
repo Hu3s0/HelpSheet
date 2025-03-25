@@ -243,4 +243,96 @@ hydra -l root -P passwords.txt mysql://192.168.1.100 -t 4
 ```bash
 hydra -l usuario -P lista.txt postgres://IP -t 4
 ```
+
+# 🌐 **PUERTO 445 / SMB (Server Message Block)**
+
+## 1. **Listar Recursos Compartidos 📂**
+
+### **Listar recursos sin autenticación (Nullsession):**
+```bash
+smbclient -L 10.10.10.10 -N
 ```
+  - `-L`: Muestra los recursos compartidos en la consola.
+  - `-N`: Usar sesión nula (sin autenticación).
+
+### **Conexión a un recurso compartido:**
+```bash
+smbclient //IP/RECURSO -N
+```
+
+### **Acceder con usuario y contraseña 🔑:**
+```bash
+smbclient //10.10.10.10/directorio -U user
+```
+
+### **Comandos dentro de smbclient para descargar archivos 📥:**
+```bash
+smb:\> get archivo.txt   # Descarga un archivo específico
+smb:\> mget *            # Descarga todos los archivos
+```
+
+### **Descargar todo un recurso compartido:**
+```bash
+smbget -R smb://IP/recurso
+```
+```bash
+prompt off   # Desactiva el modo interactivo para descargar archivos sin confirmación
+```
+
+---
+
+## 2. **Herramientas para Enumerar Recursos SMB 🛠️**
+
+### **Usar enum4linux para enumerar recursos SMB:**
+```bash
+enum4linux 10.10.10.10
+```
+```bash
+enum4linux -a 10.10.10.10   # Uso de todas las opciones para obtener más información
+```
+
+### **Usar smbmap para enumerar carpetas (Nullsession):**
+```bash
+smbmap -H 10.10.10.10
+```
+  - Enumeración de carpetas sin autenticación (Nullsession).
+
+### **Acceder a carpetas con usuario y contraseña usando smbmap 🔓:**
+```bash
+smbmap -H 10.10.10.10 -u user -p password
+```
+
+---
+
+## 3. **CrackMapExec 🔍**
+
+### **Listar recursos SMB sin autenticación:**
+```bash
+crackmapexec smb 10.10.10.10 -u ' ' -p ' ' --shares
+```
+  - Deja un espacio entre las comillas simples para usar Nullsession.
+
+### **Ataque de diccionario a un usuario determinado 🔑:**
+```bash
+crackmapexec smb 10.10.10.10 -u 'user' -p 'password.txt'
+```
+
+---
+
+## 4. **Ataques de Fuerza Bruta ⚡**
+
+### **Cracking SMB con Hydra:**
+```bash
+hydra -l usuario -P lista.txt smb://IP -t 4
+```
+  _Ejemplo_:
+```bash
+hydra -l administrador -P passwords.txt smb://192.168.1.150 -t 4
+```
+### 🌟 **Resumen de la Estructura:**
+
+1. **Listar recursos SMB 📂**: Usando herramientas como `smbclient` y `enum4linux`.
+2. **Acceder a carpetas SMB 🔓**: Para conexiones tanto con sesión nula como con autenticación.
+3. **Uso de CrackMapExec 🔍**: Para enumerar recursos y realizar ataques de diccionario.
+4. **Cracking con Hydra ⚡**: Ejemplo de cómo realizar un ataque de diccionario a un servicio SMB.
+

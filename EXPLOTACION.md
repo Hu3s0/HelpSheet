@@ -329,10 +329,61 @@ hydra -l usuario -P lista.txt smb://IP -t 4
 ```bash
 hydra -l administrador -P passwords.txt smb://192.168.1.150 -t 4
 ```
-### 🌟 **Resumen de la Estructura:**
+# METASPLOIT 🧑‍💻💥
 
-1. **Listar recursos SMB 📂**: Usando herramientas como `smbclient` y `enum4linux`.
-2. **Acceder a carpetas SMB 🔓**: Para conexiones tanto con sesión nula como con autenticación.
-3. **Uso de CrackMapExec 🔍**: Para enumerar recursos y realizar ataques de diccionario.
-4. **Cracking con Hydra ⚡**: Ejemplo de cómo realizar un ataque de diccionario a un servicio SMB.
+Metasploit es una potente herramienta para realizar pruebas de penetración y explotación de vulnerabilidades en sistemas.
 
+## Comandos Básicos 🔑
+
+### 1. **`show`** 👀
+   Muestra una lista de los diferentes **exploit**, **payloads** y **auxiliares** disponibles. 
+   - Ejemplo de uso:
+     ```bash
+     show exploits
+     ```
+
+### 2. **`search`** 🔍
+   Permite buscar un **exploit**, **payload**, **vulnerabilidad**, etc., en la base de datos de Metasploit. 
+   - Ejemplo de uso:
+     ```bash
+     search <término>
+     ```
+
+### 3. **`use`** 🖱️
+   Selecciona el **exploit**, **payload** o **auxiliar** que deseas utilizar. Puedes elegirlo por su **ruta** o su **número**.
+   - Ejemplo de uso:
+     ```bash
+     use exploit/windows/smb/ms17_010_eternalblue
+     ```
+
+### 4. **`show info`** ℹ️
+   Muestra la **información detallada** sobre el exploit, payload o auxiliar seleccionado. Te proporciona detalles como el objetivo, las opciones necesarias, etc.
+   - Ejemplo de uso:
+     ```bash
+     show info
+     ```
+
+### 5. **`set`** ⚙️
+   Permite **configurar opciones** específicas para el exploit o payload seleccionado. Por ejemplo, puedes configurar la dirección IP del objetivo o el puerto.
+   - Ejemplo de uso:
+     ```bash
+     set RHOSTS 192.168.1.10
+     ```
+
+### 6. **`setg`** 🌍
+   Configura una opción de manera **global** durante toda la sesión de Metasploit. Esto afecta a todos los exploits, payloads y auxiliares que uses a partir de ese momento.
+   - Ejemplo de uso:
+     ```bash
+     setg RHOSTS 192.168.1.10
+     ```
+
+### 7. **`run` o `exploit`** 🚀
+   Ejecuta el **exploit** o **auxiliar** seleccionado.
+   - Ejemplo de uso:
+     ```bash
+     run
+     ```
+     o
+     ```bash
+     exploit
+     ```

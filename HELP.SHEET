@@ -86,6 +86,8 @@ ENUMERACION
       ENUMERACION WEB
       ...............
 
+            TIPS
+            ....
             crtl+u => ver codigo fuente de la web
 
             Si la url no carga hay que añadir la referencia DNS en /etc/hosts/ hay varias formas:
@@ -96,6 +98,9 @@ ENUMERACION
             DNS
                dig axfr [dominio]
                nslookup
+
+            HERRAMIENTAS
+            ............
 
             whatweb -v http://url.com
 
@@ -115,6 +120,8 @@ ENUMERACION
                ffuf -w /opt/useful/seclists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/blog/FUZZ.php 
             Enumeracion recursiva y mas profunda con ffuf:
                ffuf -w /opt/useful/seclists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v
+            Enumeracion de subdominios con ffuf:
+               ffuf -w /opt/useful/seclists/Discovery/DNS/subdomains-top1million-5000.txt:FUZZ -u http://FUZZ.academy.htb/
             Otras enumeraciones con ffuf: 
                ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -u http://<RHOST>/admin../admin_staging/index.php?page=FUZZ -fs 15349 --> Searching for LFI
                ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists" --> Username enumeration with ffuf

@@ -87,8 +87,11 @@ ENUMERACION
       ...............
 
             crtl+u => ver codigo fuente de la web
-         
-            sudo nano /etc/hosts => si la web no carga bien añadir referencia DNS ej: 10.10.10.10      blog.thm
+
+            Si la url no carga hay que añadir la referencia DNS en /etc/hosts/ hay varias formas:
+               sudo nano /etc/hosts => añadir referencia DNS ej: 10.10.10.10    blog.thm
+               sudo sh -c 'echo "10.10.10.10  academy.htb" >> /etc/hosts'
+               echo "10.10.10.10  academy.htb" | sudo tee -a /etc/hosts
 
             DNS
                dig axfr [dominio]
@@ -104,9 +107,18 @@ ENUMERACION
             wfuzz -c -t 400 --hc=404 -w [wordlist] -w [archivo_extensiones] [url]/FUZZ.FUZ2Z
             wfuzz -c -t 400 --hc=404 -z range,0-100 http://IP/note.php?note=FUZZ --> probar numeros del 0 al 100
 
-            ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -u http://<RHOST>/admin../admin_staging/index.php?page=FUZZ -fs 15349 --> Searching for LFI
-            ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists" --> Username enumeration with ffuf
-            ffuf -c -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-20000.txt -H "host:FUZZ.empline.thm" -u 'http://empline.thm/' -fs 14058 --> escaneo de subdominios
+            Enumerar directorios con ffuf:
+               ffuf -w /opt/useful/seclists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://83.136.252.13:39937/FUZZ
+            Enumerar extensiones con ffuf:
+               ffuf -w /opt/useful/seclists/Discovery/Web-Content/web-extensions.txt:FUZZ -u http://SERVER_IP:PORT/blog/indexFUZZ
+            Enumerar paginas con ffuf:
+               ffuf -w /opt/useful/seclists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/blog/FUZZ.php 
+            Enumeracion recursiva y mas profunda con ffuf:
+               ffuf -w /opt/useful/seclists/Discovery/Web-Content/directory-list-2.3-small.txt:FUZZ -u http://SERVER_IP:PORT/FUZZ -recursion -recursion-depth 1 -e .php -v
+            Otras enumeraciones con ffuf: 
+               ffuf -w /usr/share/wordlists/seclists/Fuzzing/LFI/LFI-Jhaddix.txt -u http://<RHOST>/admin../admin_staging/index.php?page=FUZZ -fs 15349 --> Searching for LFI
+               ffuf -w /usr/share/wordlists/SecLists/Usernames/Names/names.txt -X POST -d "username=FUZZ&email=x&password=x&cpassword=x" -H "Content-Type: application/x-www-form-urlencoded" -u http://MACHINE_IP/customers/signup -mr "username already exists" --> Username enumeration with ffuf
+               ffuf -c -w /usr/share/wordlists/seclists/Discovery/DNS/subdomains-top1million-20000.txt -H "host:FUZZ.empline.thm" -u 'http://empline.thm/' -fs 14058 --> escaneo de subdominios
 
             dirb http://IP /path/to/wordlist
 

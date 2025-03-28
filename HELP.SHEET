@@ -108,8 +108,8 @@ ENUMERACION
 
             openssl s_client -connect [dominio]:443 --> ver certificados SSL
 
-            FFUF
-            ....
+            WFUZZ
+            .....
             wfuzz -c -t 400 --hc=404 -w [wordlist] [url]/FUZZ
             wfuzz -c -t 400 --hc=404 -w [wordlist] -w [archivo_extensiones] [url]/FUZZ.FUZ2Z
             wfuzz -c -t 400 --hc=404 -z range,0-100 http://IP/note.php?note=FUZZ --> probar numeros del 0 al 100

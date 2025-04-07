@@ -919,17 +919,18 @@ ANONIMATO/TOR
 
          Usar VPN => NordVPN de las mejores
 
+FIND FLAGS 
+...........
 
-BUSCAR FLAG EN WINDOWS
-......................
+Linux 
+     find / -type f -name "*.txt"
+     find / -type f -name "user.txt"
+     find / -type f -name "root.txt"
 
-search -f *flag*
-
-         
-
-
-
-
+Windows -->
+     dir C:\ /s /b | find "user.txt"
+     dir C:\ /s /b | find "user.txt"
+     search -f *flag*
 
 
 

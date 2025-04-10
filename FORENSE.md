@@ -97,4 +97,21 @@ sudo umount /dev/sdb1
 
 ---
 
-🔹 **¿Quieres agregar comandos adicionales o ejemplos más detallados?** 🚀
+MEMORIA RAM
+
+EXTRAER
+
+ANALIZAR
+
+sudo volatility --help > ayudavol.txt => Extrae la ayuda y explica los plugins que podemos usar
+    abrimos con: leafpad ayudavol.txt
+    
+sudo volatility -f ARCHIVO imageinfo => averiguar el perfil 
+
+sudo volatility -f ARCHIVO --profile=WinXPSP2x86 plugin => base de comando + el plugin que queramos usar
+
+
+
+
+
+

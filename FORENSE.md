@@ -100,8 +100,20 @@ sudo umount /dev/sdb1
 MEMORIA RAM
 
 EXTRAER
+.......
+
+WINDOWS
+.......
+
+Con progrma Accesdata FTK imager => Capture memory
+
+LINUX
+.....
+
+sudo insmod lime-6.12.20-amd64.ko path=<RUTA> format=raw
 
 ANALIZAR
+........
 
 sudo volatility --help > ayudavol.txt => Extrae la ayuda y explica los plugins que podemos usar
     abrimos con: leafpad ayudavol.txt

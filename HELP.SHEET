@@ -88,6 +88,11 @@ ENUMERACION
 
             TIPS
             ....
+
+            whois web.com => para saber informacion del dominio
+
+            host web.com => nos da la ip de la web, si aparecen 2 ips es porque esta detras de un proxy la web. 
+
             crtl+u => ver codigo fuente de la web
 
             Si la url no carga hay que añadir la referencia DNS en /etc/hosts/ hay varias formas:

